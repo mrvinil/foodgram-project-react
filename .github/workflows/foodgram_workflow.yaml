@@ -55,7 +55,7 @@ jobs:
           host: ${{ secrets.HOST_SERVER }}
           username: ${{ secrets.USER_SERVER }}
           key: ${{ secrets.SSH_KEY }}
-          # passphrase: ${{ secrets.PASSPHRASE }}
+          # passphrase: ${{ secrets.PASSPHRASE }} !
           stack_file_name: docker-compose.yml
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/space_foodgram:latest
