@@ -1,41 +1,60 @@
 from django.contrib import admin
-from django.utils.html import format_html
 
-from .models import AddIngredientInRec, Ingredient, Recipe, Tag
-
-
-@admin.register(Tag)
-class TagAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug', 'color')
-    search_fields = ('name', 'slug')
-    empty_value_display = '-пусто-'
-    list_filter = ('name', 'slug')
-    prepopulated_fields = {'slug': ('name',)}
+from .models import (Favorites, Follow, Ingredient, IngredientInRecipe,
+                     Purchase, Recipe, Tag)
 
 
-class RecipeIngredientInLine(admin.TabularInline):
-    model = AddIngredientInRec
-
-
-@admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('name', 'measurement_unit')
-    search_fields = ('name',)
     list_filter = ('name',)
+    search_fields = ('^name',)
 
 
-@admin.register(Recipe)
+class IngredientInRecipeAdmin(admin.TabularInline):
+    model = IngredientInRecipe
+    fk_name = 'recipe'
+
+
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('author', 'name', 'image_tag')
-    search_fields = ('user', 'author')
+    list_display = ('author', 'name', 'favorited')
     list_filter = ('author', 'name', 'tags')
-    inlines = [RecipeIngredientInLine]
-    readonly_fields = ('image_tag',)
+    exclude = ('ingredients',)
 
-    def image_tag(self, instance):
-        return format_html(
-            '<img src="{0}" style="max-width: 40%"/>',
-            instance.image.url
-        )
+    inlines = [
+        IngredientInRecipeAdmin,
+    ]
 
-    image_tag.short_description = 'Предпросмотр изображения'
+    def favorited(self, obj):
+        favorited_count = Favorites.objects.filter(recipe=obj).count()
+        return favorited_count
+
+    favorited.short_description = 'В избранном'
+
+
+class TagAdmin(admin.ModelAdmin):
+    list_display = ('name', 'color', 'slug')
+
+
+class PurchaseAdmin(admin.ModelAdmin):
+    list_display = ('user', 'recipe')
+
+
+class FavoriteAdmin(admin.ModelAdmin):
+    list_display = ('user', 'recipe')
+
+
+class SubscriptionAdmin(admin.ModelAdmin):
+    list_display = ('author', 'user')
+
+
+class RecipeIngredientAdmin(admin.ModelAdmin):
+    list_display = ('recipe', 'ingredient', 'amount')
+
+
+admin.site.register(Ingredient, IngredientAdmin)
+admin.site.register(Recipe, RecipeAdmin)
+admin.site.register(Tag, TagAdmin)
+admin.site.register(Purchase, PurchaseAdmin)
+admin.site.register(Favorites, FavoriteAdmin)
+admin.site.register(Follow, SubscriptionAdmin)
+admin.site.register(IngredientInRecipe, RecipeIngredientAdmin)
