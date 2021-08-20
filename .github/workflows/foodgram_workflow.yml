@@ -46,7 +46,7 @@ jobs:
         with:
           push: true
           context: ./backend/
-          tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:v.2
 
   deploy:
     runs-on: ubuntu-latest
@@ -60,10 +60,10 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           passphrase: ${{ secrets.SERVER_SSH_PASSPHRASE }}
-          stack_file_name: docker-compose.yaml
+          stack_file_name: docker-compose.yml
           script: |
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:v.2
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:v1
             sudo docker-compose stop
             sudo docker-compose rm -f web
             touch .env
