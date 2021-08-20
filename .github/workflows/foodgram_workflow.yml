@@ -46,7 +46,7 @@ jobs:
         with:
           push: true
           context: ./backend/
-          tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:v.2
+          tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
 
   deploy:
     runs-on: ubuntu-latest
@@ -62,7 +62,7 @@ jobs:
           passphrase: ${{ secrets.SERVER_SSH_PASSPHRASE }}
           stack_file_name: docker-compose.yml
           script: |
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:v.2
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:v1
             sudo docker-compose stop
             sudo docker-compose rm -f web
@@ -74,6 +74,7 @@ jobs:
             echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
             sudo docker-compose up -d
+            sudo docker-compose exec -T web python manage.py makemigrations --noinput
             sudo docker-compose exec -T web python manage.py migrate --noinput
             sudo docker-compose exec -T web python manage.py collectstatic --no-input
 

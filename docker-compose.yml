@@ -8,7 +8,7 @@ services:
       - ./.env
   
   web:
-    image: mrvinil/foodgram_backend:v.2
+    image: mrvinil/foodgram_backend:latest
     restart: always
     volumes:
       - static_value:/app/static/
