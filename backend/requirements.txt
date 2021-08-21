@@ -67,3 +67,4 @@ virtualenv==20.2.0
 wrapt==1.12.1
 zipp==2.2.0
 django-import-export
+drf-yasg
